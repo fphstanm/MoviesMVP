@@ -12,18 +12,27 @@ let package = Package(
         .library(name: "Navigation", targets: ["Navigation"])
     ],
     dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMinor(from: "5.8.0")),
         .package(url: "https://github.com/AliSoftware/Dip", .upToNextMinor(from: "7.1.1"))
     ],
     targets: [
-        .target(name: "BusinessLogic"),
+        .target(name: "BusinessLogic", dependencies: ["Networking", "Library"]),
         .target(
             name: "Helpers",
             dependencies: [
-                .product(name: "Dip", package: "Dip")
+                .product(name: "Dip", package: "Dip"),
+                "BusinessLogic"
             ]
         ),
+        .target(name: "Library"),
         .target(name: "Models"),
-        .target(name: "Networking"),
+        .target(
+            name: "Networking",
+            dependencies: [
+                .product(name: "Alamofire", package: "Alamofire"),
+                "Models"
+            ]
+        ),
 
         // MARK: - Navigation
 
@@ -36,6 +45,6 @@ let package = Package(
 
         // MARK: - Sources/Screens
 
-        .target(name: "Movies", path: "Sources/Screens/Movies")
+        .target(name: "Movies", dependencies: ["BusinessLogic", "Models", "Helpers"], path: "Sources/Screens/Movies")
     ]
 )
