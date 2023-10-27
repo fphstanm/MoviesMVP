@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public class AppRouter {
 
     private let window: UIWindow
@@ -15,11 +16,6 @@ public class AppRouter {
     public init(window: UIWindow) {
         self.window = window
         self.childRouters = []
-        print("init AppRouter")
-    }
-
-    deinit {
-        print("deinit AppRouter")
     }
 
     public func start() {

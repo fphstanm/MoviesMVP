@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 protocol Routing {
     init(navigationController: UINavigationController)
 
