@@ -12,10 +12,16 @@ let package = Package(
         .library(name: "Navigation", targets: ["Navigation"])
     ],
     dependencies: [
-
+        .package(url: "https://github.com/AliSoftware/Dip", .upToNextMinor(from: "7.1.1"))
     ],
     targets: [
         .target(name: "BusinessLogic"),
+        .target(
+            name: "Helpers",
+            dependencies: [
+                .product(name: "Dip", package: "Dip")
+            ]
+        ),
         .target(name: "Models"),
         .target(name: "Networking"),
 
