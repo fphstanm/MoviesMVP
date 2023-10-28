@@ -5,6 +5,7 @@
 //  Created by Philip on 27.10.2023.
 //
 
+import Combine
 import UIKit
 
 public protocol MoviesRouting {
@@ -13,8 +14,10 @@ public protocol MoviesRouting {
 
 public class MoviesViewController: UIViewController {
 
+    private let contentView = MoviesView()
     private let presenter: MoviesPresenter
     private let router: MoviesRouting
+    private var cancellables = [AnyCancellable]()
 
     // MARK: - Lifecycle
 
@@ -28,9 +31,28 @@ public class MoviesViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override func loadView() {
+        view = contentView
+    }
+
+    // MARK: - Public methods
+
     public override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.viewDidLoad()
-        view.backgroundColor = .orange
+        setupBinding()
+        Task { await presenter.viewDidLoad() }
+    }
+
+    // MARK: - Private methods
+
+    private func setupBinding() {
+        let state = presenter.$state.removeDuplicates()
+
+        state
+            .map { MoviesPresenter.makeUIModel(from: $0) }
+            .sink { [contentView] in
+                contentView.render($0)
+            }
+            .store(in: &cancellables)
     }
 }
