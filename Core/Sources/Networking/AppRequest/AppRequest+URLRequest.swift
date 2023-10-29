@@ -9,10 +9,8 @@ import Foundation
 
 extension AppRequest {
     func asUrlRequest() throws -> URLRequest {
-        guard
-            let url = URL(string: baseUrl)?.appendingPathComponent(path),
-            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        else {
+        let url = baseUrl.appendingPathComponent(path)
+        guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw NSError(domain: "", code: 0, userInfo: ["Error": "Can't build url"])
         }
 

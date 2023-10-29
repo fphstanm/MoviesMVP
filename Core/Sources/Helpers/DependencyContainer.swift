@@ -20,7 +20,6 @@ public enum DependencyContainer {
 
         // MARK: - Clients
 
-        container.register(.singleton, type: GenreClienting.self, factory: GenreClient.init)
         container.register(.singleton, type: MovieClienting.self, factory: MovieClient.init)
 
         // MARK: - Adapters

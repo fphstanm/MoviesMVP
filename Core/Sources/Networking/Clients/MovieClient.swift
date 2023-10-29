@@ -9,7 +9,8 @@ import Foundation
 import Models
 
 public protocol MovieClienting {
-    func popular(page: Int) async throws -> MoviesPage
+    func getPopularMovies(page: Int) async throws -> MoviesPage
+    func getMovieGenres() async throws -> [Genre]
 }
 
 public final class MovieClient: MovieClienting {
@@ -18,16 +19,22 @@ public final class MovieClient: MovieClienting {
     private let networkClient: NetworkClienting
 
     public init(networkClient: NetworkClienting) {
-        self.api = MovieAPI(baseUrl: AppConstants.baseURL.absoluteString)
+        self.api = MovieAPI(baseUrl: AppConstants.baseURL)
         self.networkClient = networkClient
     }
 
     // MARK: - Public methods
 
-    public func popular(page: Int) async throws -> MoviesPage {
-        let request = try api.makePopularRequest(page: page).asUrlRequest()
+    public func getPopularMovies(page: Int) async throws -> MoviesPage {
+        let request = try api.makePopularMoviesRequest(page: page).asUrlRequest()
         let respone: PaginatedResponse<MovieResponse> = try await networkClient.execute(request: request)
         return makeMoviesPage(response: respone)
+    }
+
+    public func getMovieGenres() async throws -> [Genre] {
+        let request = try api.makeMovieGenresRequest().asUrlRequest()
+        let response: GenreListResponse = try await networkClient.execute(request: request)
+        return makeGenreList(response: response)
     }
 
     // MARK: - Private methods
@@ -53,5 +60,9 @@ public final class MovieClient: MovieClienting {
             title: response.title,
             voteAverage: response.voteAverage
         )
+    }
+
+    private func makeGenreList(response: GenreListResponse) -> [Genre] {
+        response.genres.map { Genre(id: $0.id, name: $0.name) }
     }
 }
