@@ -10,6 +10,7 @@ import Models
 
 public protocol MovieClienting {
     func getPopularMovies(page: Int) async throws -> MoviesPage
+    func getSearchMovies(page: Int, query: String) async throws -> MoviesPage
     func getMovieGenres() async throws -> [Genre]
 }
 
@@ -29,6 +30,12 @@ public final class MovieClient: MovieClienting {
         let request = try api.makePopularMoviesRequest(page: page).asUrlRequest()
         let respone: PaginatedResponse<MovieResponse> = try await networkClient.execute(request: request)
         return makeMoviesPage(response: respone)
+    }
+
+    public func getSearchMovies(page: Int, query: String) async throws -> MoviesPage {
+        let request = try api.makeSearchMoviesRequest(page: page, query: query).asUrlRequest()
+        let response: PaginatedResponse<MovieResponse> = try await networkClient.execute(request: request)
+        return makeMoviesPage(response: response)
     }
 
     public func getMovieGenres() async throws -> [Genre] {
@@ -55,7 +62,7 @@ public final class MovieClient: MovieClienting {
         return Movie(
             genres: response.genreIDS.map { Genre(id: $0, name: "") },
             id: response.id,
-            posterImageUrl: AppConstants.imageBaseURL.appendingPathComponent(response.posterPath),
+            posterImageUrl: response.posterPath.flatMap(AppConstants.imageBaseURL.appendingPathComponent),
             releaseDate: dateFormatter.date(from: response.releaseDate) ?? Date(),
             title: response.title,
             voteAverage: response.voteAverage

@@ -71,5 +71,9 @@ public class MoviesViewController: UIViewController {
         contentView.onScrollToBottom = { [presenter] in
             Task { await presenter.didScrollToBottom() }
         }
+
+        contentView.onChangeSearchText = { [presenter] text in
+            Task { await presenter.didChangeSearchText(text) }
+        }
     }
 }

@@ -23,6 +23,11 @@ final class MoviesPresenter {
 
     // MARK: - Public methods
 
+    func didChangeSearchText(_ text: String) async {
+        state.searchText = text
+        await loadFirstPage()
+    }
+
     func didScrollToBottom() async {
         guard state.page != state.totalPages, !state.isLoading else {
             return
@@ -41,7 +46,13 @@ final class MoviesPresenter {
         do {
             state.isLoading = true
             let page = 1
-            let moviesPage = try await movieFacade.getPopularMovies(page: page)
+            let moviesPage: MoviesPage = try await {
+                if state.searchText.isEmpty {
+                    return try await movieFacade.getPopularMovies(page: page)
+                } else {
+                    return try await movieFacade.searchMovies(page: page, query: state.searchText)
+                }
+            }()
             state.isLoading = false
             state.movies = moviesPage.items
             state.page = 1
@@ -56,7 +67,13 @@ final class MoviesPresenter {
         do {
             state.isLoading = true
             let nextPage = state.page + 1
-            let moviesPage = try await movieFacade.getPopularMovies(page: nextPage)
+            let moviesPage: MoviesPage = try await {
+                if state.searchText.isEmpty {
+                    return try await movieFacade.getPopularMovies(page: nextPage)
+                } else {
+                    return try await movieFacade.searchMovies(page: nextPage, query: state.searchText)
+                }
+            }()
             state.isLoading = false
             state.movies.append(contentsOf: moviesPage.items)
             state.page = nextPage

@@ -12,7 +12,7 @@ extension MoviesPresenter {
         return MoviesView.Model(
             items: state.movies.map { movie in
                 MoviesCell.Model(
-                    imageUrl: movie.posterImageUrl ?? URL(string: "")!, // FIXME: pass optional
+                    imageUrl: movie.posterImageUrl,
                     title: movie.title,
                     rating: String(format: "%.1f", movie.voteAverage),
                     genres: movie.genres.map { "#" + $0.name }.joined(separator: " ")

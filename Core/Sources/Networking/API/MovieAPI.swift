@@ -22,6 +22,13 @@ struct MovieAPI {
             .add(query: ["page": String(page)])
     }
 
+    func makeSearchMoviesRequest(page: Int, query: String) -> AppRequest {
+        AppRequest(baseUrl: baseUrl)
+            .add(method: .get)
+            .add(path: "search/movie")
+            .add(query: ["page": String(page), "query": query])
+    }
+
     func makeMovieGenresRequest() -> AppRequest {
         AppRequest(baseUrl: baseUrl)
             .add(method: .get)

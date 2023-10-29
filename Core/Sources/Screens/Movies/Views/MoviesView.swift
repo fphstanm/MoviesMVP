@@ -17,9 +17,11 @@ final class MoviesView: UIView {
     typealias DataSource = UICollectionViewDiffableDataSource<Int, MoviesCell.Model>
 
     private let stackView = UIStackView()
+    private let searchBar = UISearchBar()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private lazy var dataSource = makeDataSource()
     // callbacks
+    var onChangeSearchText: (String) -> Void = { _ in }
     var onScrollToBottom: () -> Void = { }
 
     // MARK: - Lifecycle
@@ -55,10 +57,13 @@ final class MoviesView: UIView {
     private func setup() {
         backgroundColor = .white
         setupStackView()
+        setupSearchBar()
         setupCollectionView()
     }
 
     private func setupStackView() {
+        [searchBar, collectionView].forEach(stackView.addArrangedSubview)
+        stackView.axis = .vertical
         addSubview(stackView, constraints: [
             stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -67,11 +72,15 @@ final class MoviesView: UIView {
         ])
     }
 
+    private func setupSearchBar() {
+        searchBar.delegate = self
+    }
+
     private func setupCollectionView() {
-        collectionView.delegate = self
         collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.keyboardDismissMode = .onDrag
         collectionView.register(MoviesCell.self, forCellWithReuseIdentifier: String(describing: MoviesCell.self))
-        stackView.addArrangedSubview(collectionView)
     }
 
     private func setupCollectionViewLayout() {
@@ -81,11 +90,19 @@ final class MoviesView: UIView {
     }
 
     private func makeDataSource() -> DataSource {
-        return DataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, model in
+        return DataSource(collectionView: collectionView) { collectionView, indexPath, model in
             let cell: MoviesCell = collectionView.dequeueReusableCell(forIndexPath: indexPath)
             cell.render(model)
             return cell
         }
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension MoviesView: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        onChangeSearchText(searchText)
     }
 }
 

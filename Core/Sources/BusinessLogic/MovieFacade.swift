@@ -10,6 +10,7 @@ import Networking
 
 public protocol MovieFacading {
     func getPopularMovies(page: Int) async throws -> MoviesPage
+    func searchMovies(page: Int, query: String) async throws -> MoviesPage
 }
 
 public actor MovieFacade: MovieFacading {
@@ -34,11 +35,21 @@ public actor MovieFacade: MovieFacading {
         return fetchedMoviesPage
     }
 
+    public func searchMovies(page: Int, query: String) async throws -> MoviesPage {
+        async let moviesPage = movieClient.getSearchMovies(page: page, query: query)
+        async let genres = getGenres()
+        var fetchedMoviesPage = try await moviesPage
+        fetchedMoviesPage.fillGenresNames(genres: try await genres)
+        return fetchedMoviesPage
+    }
+
     // MARK: - Private methods
 
     private func getGenres() async throws -> [Genre] {
         if genres.isEmpty {
-            return try await movieClient.getMovieGenres()
+            let genres = try await movieClient.getMovieGenres()
+            self.genres = genres
+            return genres
         } else {
             return genres
         }
