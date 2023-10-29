@@ -9,7 +9,7 @@ import Models
 import Networking
 
 public protocol MovieFacading {
-    func getPopularMovies(page: Int) async throws -> MoviePage
+    func getPopularMovies(page: Int) async throws -> MoviesPage
 }
 
 public actor MovieFacade: MovieFacading {
@@ -28,7 +28,7 @@ public actor MovieFacade: MovieFacading {
 
     // MARK: - Public methods
 
-    public func getPopularMovies(page: Int) async throws -> MoviePage {
+    public func getPopularMovies(page: Int) async throws -> MoviesPage {
         async let moviesPage = movieClient.popular(page: page)
         async let genres = getGenres()
         var fetchedMoviesPage = try await moviesPage

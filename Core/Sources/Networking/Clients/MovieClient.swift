@@ -9,7 +9,7 @@ import Foundation
 import Models
 
 public protocol MovieClienting {
-    func popular(page: Int) async throws -> MoviePage
+    func popular(page: Int) async throws -> MoviesPage
 }
 
 public final class MovieClient: MovieClienting {
@@ -24,16 +24,16 @@ public final class MovieClient: MovieClienting {
 
     // MARK: - Public methods
 
-    public func popular(page: Int) async throws -> MoviePage {
+    public func popular(page: Int) async throws -> MoviesPage {
         let request = try api.makePopularRequest(page: page).asUrlRequest()
         let respone: PaginatedResponse<MovieResponse> = try await networkClient.execute(request: request)
-        return makeMoviePage(response: respone)
+        return makeMoviesPage(response: respone)
     }
 
     // MARK: - Private methods
 
-    private func makeMoviePage(response: PaginatedResponse<MovieResponse>) -> MoviePage {
-        return MoviePage(
+    private func makeMoviesPage(response: PaginatedResponse<MovieResponse>) -> MoviesPage {
+        return MoviesPage(
             items: response.results.map(makeMovie),
             page: response.page,
             totalItems: response.totalResults,

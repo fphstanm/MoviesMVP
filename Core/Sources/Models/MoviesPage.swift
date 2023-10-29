@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct MoviePage: Equatable {
+public struct MoviesPage: Equatable {
 
     public var items: [Movie]
     public let page: Int
     public let totalItems: Int
     public let totalPages: Int
 
-    static public let empty = MoviePage(items: [], page: 1, totalItems: 0, totalPages: 0)
+    static public let empty = MoviesPage(items: [], page: 1, totalItems: 0, totalPages: 0)
 
     public init(items: [Movie], page: Int, totalItems: Int, totalPages: Int) {
         self.items = items
