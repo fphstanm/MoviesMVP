@@ -54,5 +54,9 @@ public class MoviesViewController: UIViewController {
                 contentView.render($0)
             }
             .store(in: &cancellables)
+
+        contentView.onScrollToBottom = { [presenter] in
+            Task { await presenter.didScrollToBottom() }
+        }
     }
 }

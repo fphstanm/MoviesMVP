@@ -19,6 +19,8 @@ final class MoviesView: UIView {
     private let stackView = UIStackView()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private lazy var dataSource = makeDataSource()
+    // callbacks
+    var onScrollToBottom: () -> Void = { }
 
     // MARK: - Lifecycle
 
@@ -66,6 +68,7 @@ final class MoviesView: UIView {
     }
 
     private func setupCollectionView() {
+        collectionView.delegate = self
         collectionView.backgroundColor = .clear
         collectionView.register(MoviesCell.self, forCellWithReuseIdentifier: String(describing: MoviesCell.self))
         stackView.addArrangedSubview(collectionView)
@@ -78,10 +81,20 @@ final class MoviesView: UIView {
     }
 
     private func makeDataSource() -> DataSource {
-        return DataSource(collectionView: collectionView) { collectionView, indexPath, model in
+        return DataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, model in
             let cell: MoviesCell = collectionView.dequeueReusableCell(forIndexPath: indexPath)
             cell.render(model)
             return cell
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension MoviesView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if collectionView.numberOfItems(inSection: 0) - 5 == indexPath.item {
+            onScrollToBottom()
         }
     }
 }
