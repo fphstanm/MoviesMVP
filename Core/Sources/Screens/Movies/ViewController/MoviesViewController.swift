@@ -14,6 +14,7 @@ public protocol MoviesRouting {
 
 public class MoviesViewController: UIViewController {
 
+    private let titleView = MoviesNavigationView()
     private let contentView = MoviesView()
     private let presenter: MoviesPresenter
     private let router: MoviesRouting
@@ -39,11 +40,16 @@ public class MoviesViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationView()
         setupBinding()
         Task { await presenter.viewDidLoad() }
     }
 
     // MARK: - Private methods
+
+    private func setupNavigationView() {
+        navigationItem.titleView = titleView
+    }
 
     private func setupBinding() {
         let state = presenter.$state.removeDuplicates()
@@ -52,6 +58,13 @@ public class MoviesViewController: UIViewController {
             .map { MoviesPresenter.makeUIModel(from: $0) }
             .sink { [contentView] in
                 contentView.render($0)
+            }
+            .store(in: &cancellables)
+
+        state
+            .map { MoviesNavigationView.Model(isLoading: $0.isLoading) }
+            .sink { [titleView] in
+                titleView.render($0)
             }
             .store(in: &cancellables)
 
