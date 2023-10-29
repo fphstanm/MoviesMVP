@@ -13,9 +13,22 @@ extension MoviesPresenter {
         var movies: [Movie]
         var page: Int
         var searchText: String
+        var sortOrder: MoviesSortOrder
         var totalPages: Int
         var isLoading: Bool
+        var alert: Alert?
 
-        static let initial: State = State(movies: [], page: 1, searchText: "", totalPages: 1, isLoading: false)
+        static let initial: State = State(
+            movies: [],
+            page: 1,
+            searchText: "",
+            sortOrder: .popularity,
+            totalPages: 1,
+            isLoading: false
+        )
+    }
+
+    enum Alert {
+        case sortingActionSheet
     }
 }

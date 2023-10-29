@@ -9,7 +9,7 @@ import Models
 import Networking
 
 public protocol MovieFacading {
-    func getPopularMovies(page: Int) async throws -> MoviesPage
+    func getMovies(page: Int, sortOrder: MoviesSortOrder) async throws -> MoviesPage
     func searchMovies(page: Int, query: String) async throws -> MoviesPage
 }
 
@@ -27,8 +27,8 @@ public actor MovieFacade: MovieFacading {
 
     // MARK: - Public methods
 
-    public func getPopularMovies(page: Int) async throws -> MoviesPage {
-        async let moviesPage = movieClient.getPopularMovies(page: page)
+    public func getMovies(page: Int, sortOrder: MoviesSortOrder) async throws -> MoviesPage {
+        async let moviesPage = movieClient.getMovies(page: page, sortOrder: sortOrder)
         async let genres = getGenres()
         var fetchedMoviesPage = try await moviesPage
         fetchedMoviesPage.fillGenresNames(genres: try await genres)
@@ -36,7 +36,7 @@ public actor MovieFacade: MovieFacading {
     }
 
     public func searchMovies(page: Int, query: String) async throws -> MoviesPage {
-        async let moviesPage = movieClient.getSearchMovies(page: page, query: query)
+        async let moviesPage = movieClient.searchMovies(page: page, query: query)
         async let genres = getGenres()
         var fetchedMoviesPage = try await moviesPage
         fetchedMoviesPage.fillGenresNames(genres: try await genres)

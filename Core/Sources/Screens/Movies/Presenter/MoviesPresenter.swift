@@ -36,6 +36,19 @@ final class MoviesPresenter {
         await loadNextPage()
     }
 
+    func didTapSortButton() {
+        state.alert = .sortingActionSheet
+        state.alert = nil
+    }
+
+    func didTapSort(by option: MoviesSortOrder) async {
+        let previousOrder = state.sortOrder
+        state.sortOrder = option
+        if previousOrder != option {
+            await loadFirstPage()
+        }
+    }
+
     func viewDidLoad() async {
         await loadFirstPage()
     }
@@ -48,7 +61,7 @@ final class MoviesPresenter {
             let page = 1
             let moviesPage: MoviesPage = try await {
                 if state.searchText.isEmpty {
-                    return try await movieFacade.getPopularMovies(page: page)
+                    return try await movieFacade.getMovies(page: page, sortOrder: state.sortOrder)
                 } else {
                     return try await movieFacade.searchMovies(page: page, query: state.searchText)
                 }
@@ -69,7 +82,7 @@ final class MoviesPresenter {
             let nextPage = state.page + 1
             let moviesPage: MoviesPage = try await {
                 if state.searchText.isEmpty {
-                    return try await movieFacade.getPopularMovies(page: nextPage)
+                    return try await movieFacade.getMovies(page: nextPage, sortOrder: state.sortOrder)
                 } else {
                     return try await movieFacade.searchMovies(page: nextPage, query: state.searchText)
                 }

@@ -49,6 +49,7 @@ public class MoviesViewController: UIViewController {
 
     private func setupNavigationView() {
         navigationItem.titleView = titleView
+        navigationItem.rightBarButtonItem = makeSortBarButtonItem()
     }
 
     private func setupBinding() {
@@ -68,6 +69,20 @@ public class MoviesViewController: UIViewController {
             }
             .store(in: &cancellables)
 
+        state
+            .map { $0.searchText.isEmpty }
+            .sink { [weak self] isSearchTextEmpty in
+                self?.navigationItem.rightBarButtonItem = isSearchTextEmpty ? self?.makeSortBarButtonItem() : nil
+            }
+            .store(in: &cancellables)
+
+        state
+            .compactMap(\.alert)
+            .sink { [weak self] alert in
+                self?.showAlert(alert: alert)
+            }
+            .store(in: &cancellables)
+
         contentView.onScrollToBottom = { [presenter] in
             Task { await presenter.didScrollToBottom() }
         }
@@ -75,5 +90,54 @@ public class MoviesViewController: UIViewController {
         contentView.onChangeSearchText = { [presenter] text in
             Task { await presenter.didChangeSearchText(text) }
         }
+    }
+
+    // MARK: - Private methods
+
+    private func makeSortBarButtonItem() -> UIBarButtonItem {
+        UIBarButtonItem(
+            title: "Sort",
+            style: .plain,
+            target: self,
+            action: #selector(onTapRightBarButtonItem)
+        )
+    }
+
+    // MARK: - Alerts
+
+    private func showAlert(alert: MoviesPresenter.Alert) {
+        switch alert {
+        case .sortingActionSheet:
+            showSortingActionSheet()
+        }
+    }
+
+    private func showSortingActionSheet() {
+        let alertController = UIAlertController(title: "Sort by:", message: nil, preferredStyle: .actionSheet)
+        alertController.addAction(
+            UIAlertAction(title: "Popularity", style: .default) { [presenter] _ in
+                Task { await presenter.didTapSort(by: .popularity) }
+            }
+        )
+        alertController.addAction(
+            UIAlertAction(title: "Rating", style: .default) { [presenter] _ in
+                Task { await presenter.didTapSort(by: .rating) }
+            }
+        )
+        alertController.addAction(
+            UIAlertAction(title: "Release date", style: .default) { [presenter] _ in
+                Task { await presenter.didTapSort(by: .releaseDate) }
+            }
+        )
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        present(alertController, animated: true)
+    }
+
+    // MARK: - Selectors
+
+    @objc
+    private func onTapRightBarButtonItem() {
+        presenter.didTapSortButton()
     }
 }

@@ -47,7 +47,7 @@ final class MoviesNavigationView: UIView {
     }
 
     private func setupTitleLabel() {
-        titleLabel.text = "Popular"
+        titleLabel.text = "Popular Movies"
         titleLabel.font = .systemFont(ofSize: 20, weight: .semibold)
         addSubview(titleLabel, constraints: [
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

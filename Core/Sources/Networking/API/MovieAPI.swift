@@ -15,11 +15,11 @@ struct MovieAPI {
         self.baseUrl = baseUrl
     }
 
-    func makePopularMoviesRequest(page: Int) -> AppRequest {
+    func makeDiscoverMoviesRequest(page: Int, sortBy: String) -> AppRequest {
         AppRequest(baseUrl: baseUrl)
             .add(method: .get)
-            .add(path: "movie/popular")
-            .add(query: ["page": String(page)])
+            .add(path: "discover/movie")
+            .add(query: ["page": String(page), "sort_by": sortBy])
     }
 
     func makeSearchMoviesRequest(page: Int, query: String) -> AppRequest {

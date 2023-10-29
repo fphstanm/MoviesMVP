@@ -14,6 +14,7 @@ extension MoviesPresenter {
         return MoviesView.Model(
             items: state.movies.map { movie in
                 MoviesCell.Model(
+                    id: movie.id,
                     imageUrl: movie.posterImageUrl,
                     title: movie.title,
                     rating: String(format: "%.1f", movie.voteAverage),

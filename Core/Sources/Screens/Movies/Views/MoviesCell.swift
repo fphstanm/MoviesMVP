@@ -12,6 +12,7 @@ import UIKit
 final class MoviesCell: UICollectionViewCell {
 
     struct Model: Equatable, Hashable {
+        let id: Int
         let imageUrl: URL?
         let title: String
         let rating: String
