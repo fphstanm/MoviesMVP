@@ -83,12 +83,16 @@ public class MoviesViewController: UIViewController {
             }
             .store(in: &cancellables)
 
-        contentView.onScrollToBottom = { [presenter] in
-            Task { await presenter.didScrollToBottom() }
-        }
-
         contentView.onChangeSearchText = { [presenter] text in
             Task { await presenter.didChangeSearchText(text) }
+        }
+
+        contentView.onPullRefreshControl = { [presenter] in
+            Task { await presenter.didPullToRefresh() }
+        }
+
+        contentView.onScrollToBottom = { [presenter] in
+            Task { await presenter.didScrollToBottom() }
         }
     }
 

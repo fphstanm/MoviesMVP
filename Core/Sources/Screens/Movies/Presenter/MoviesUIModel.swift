@@ -21,7 +21,8 @@ extension MoviesPresenter {
                     releaseDate: dateFormatter.string(from: movie.releaseDate),
                     genres: movie.genres.map { "#" + $0.name }.joined(separator: " ")
                 )
-            }
+            },
+            isRefreshing: state.isLoading
         )
     }
 }

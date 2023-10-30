@@ -12,17 +12,20 @@ final class MoviesView: UIView {
 
     struct Model: Equatable {
         let items: [MoviesCell.Model]
+        let isRefreshing: Bool
     }
 
     typealias DataSource = UICollectionViewDiffableDataSource<Int, MoviesCell.Model>
 
     private let stackView = UIStackView()
     private let searchBar = UISearchBar()
+    private let refreshControl = UIRefreshControl()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private lazy var dataSource = makeDataSource()
     // callbacks
     var onChangeSearchText: (String) -> Void = { _ in }
     var onScrollToBottom: () -> Void = { }
+    var onPullRefreshControl: () -> Void = { }
 
     // MARK: - Lifecycle
 
@@ -45,11 +48,14 @@ final class MoviesView: UIView {
 
     // MARK: - Public methods
 
-    func render(_ modell: Model) {
+    func render(_ model: Model) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, MoviesCell.Model>()
         snapshot.appendSections([0])
-        snapshot.appendItems(modell.items, toSection: 0)
+        snapshot.appendItems(model.items, toSection: 0)
         dataSource.apply(snapshot)
+        if !model.isRefreshing {
+            refreshControl.endRefreshing()
+        }
     }
 
     // MARK: - Setup
@@ -58,6 +64,7 @@ final class MoviesView: UIView {
         backgroundColor = .white
         setupStackView()
         setupSearchBar()
+        setupRefreshControl()
         setupCollectionView()
     }
 
@@ -76,10 +83,15 @@ final class MoviesView: UIView {
         searchBar.delegate = self
     }
 
+    private func setupRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(onChangeRefreshControl), for: .valueChanged)
+    }
+
     private func setupCollectionView() {
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.keyboardDismissMode = .onDrag
+        collectionView.refreshControl = refreshControl
         collectionView.register(MoviesCell.self, forCellWithReuseIdentifier: String(describing: MoviesCell.self))
     }
 
@@ -89,12 +101,19 @@ final class MoviesView: UIView {
         collectionView.collectionViewLayout = layout
     }
 
+    // MARK: - Private methods
+
     private func makeDataSource() -> DataSource {
         return DataSource(collectionView: collectionView) { collectionView, indexPath, model in
             let cell: MoviesCell = collectionView.dequeueReusableCell(forIndexPath: indexPath)
             cell.render(model)
             return cell
         }
+    }
+
+    @objc
+    private func onChangeRefreshControl() {
+        onPullRefreshControl()
     }
 }
 

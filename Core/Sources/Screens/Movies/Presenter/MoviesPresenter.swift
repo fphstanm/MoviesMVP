@@ -28,6 +28,10 @@ final class MoviesPresenter {
         await loadFirstPage()
     }
 
+    func didPullToRefresh() async {
+        await loadFirstPage()
+    }
+
     func didScrollToBottom() async {
         guard state.page != state.totalPages, !state.isLoading else {
             return
