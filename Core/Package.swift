@@ -43,12 +43,14 @@ let package = Package(
         .target(
             name: "Navigation",
             dependencies: [
-                "Movies"
+                "Movies",
+                "MovieDetails"
             ]
         ),
 
-        // MARK: - Sources/Screens
+        // MARK: - Screens
 
-        .target(name: "Movies", dependencies: ["BusinessLogic", "Models", "Helpers"], path: "Sources/Screens/Movies")
+        .target(name: "Movies", dependencies: ["BusinessLogic", "Models", "Helpers"], path: "Sources/Screens/Movies"),
+        .target(name: "MovieDetails", dependencies: ["BusinessLogic", "Models", "Helpers"], path: "Sources/Screens/MovieDetails")
     ]
 )

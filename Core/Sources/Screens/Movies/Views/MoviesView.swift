@@ -24,8 +24,9 @@ final class MoviesView: UIView {
     private lazy var dataSource = makeDataSource()
     // callbacks
     var onChangeSearchText: (String) -> Void = { _ in }
-    var onScrollToBottom: () -> Void = { }
     var onPullRefreshControl: () -> Void = { }
+    var onTapMovie: (Int) -> Void = { _ in }
+    var onScrollToBottom: () -> Void = { }
 
     // MARK: - Lifecycle
 
@@ -128,6 +129,10 @@ extension MoviesView: UISearchBarDelegate {
 // MARK: - UICollectionViewDelegate
 
 extension MoviesView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        onTapMovie(indexPath.item)
+    }
+
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if collectionView.numberOfItems(inSection: 0) - 5 == indexPath.item {
             onScrollToBottom()

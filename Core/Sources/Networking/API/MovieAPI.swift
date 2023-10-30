@@ -34,4 +34,10 @@ struct MovieAPI {
             .add(method: .get)
             .add(path: "genre/movie/list")
     }
+
+    func makeMovieDetailsRequest(id: Int) -> AppRequest {
+        AppRequest(baseUrl: baseUrl)
+            .add(method: .get)
+            .add(path: "movie/\(String(id))")
+    }
 }

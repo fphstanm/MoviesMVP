@@ -6,6 +6,7 @@
 //
 
 import Movies
+import MovieDetails
 import UIKit
 
 class MoviesRouter: Routing {
@@ -21,8 +22,17 @@ class MoviesRouter: Routing {
     }
 }
 
-extension MoviesRouter: MoviesRouting {
-    func onTapDetails() {
+// MARK: - MoviesRouting
 
+extension MoviesRouter: MoviesRouting {
+    func onTapDetails(movieId: Int) {
+        let viewController = MovieDetailsViewController.assemble(router: self, movieId: movieId)
+        navigationController.pushViewController(viewController, animated: true)
     }
+}
+
+// MARK: - MovieDetailsRouting
+
+extension MoviesRouter: MovieDetailsRouting {
+
 }
