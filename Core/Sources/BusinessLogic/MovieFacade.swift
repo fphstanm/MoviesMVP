@@ -10,6 +10,7 @@ import Networking
 
 public protocol MovieFacading {
     func getMovies(page: Int, sortOrder: MoviesSortOrder) async throws -> MoviesPage
+    func getMovieDetails(id: Int) async throws -> MovieDetails
     func searchMovies(page: Int, query: String) async throws -> MoviesPage
 }
 
@@ -33,6 +34,10 @@ public actor MovieFacade: MovieFacading {
         var fetchedMoviesPage = try await moviesPage
         fetchedMoviesPage.fillGenresNames(genres: try await genres)
         return fetchedMoviesPage
+    }
+
+    public func getMovieDetails(id: Int) async throws -> MovieDetails {
+        return try await movieClient.getMovieDetails(id: id)
     }
 
     public func searchMovies(page: Int, query: String) async throws -> MoviesPage {

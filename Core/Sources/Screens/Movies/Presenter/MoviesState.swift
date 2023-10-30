@@ -17,6 +17,7 @@ extension MoviesPresenter {
         var totalPages: Int
         var isLoading: Bool
         var alert: Alert?
+        var route: Route?
 
         static let initial: State = State(
             movies: [],
@@ -30,5 +31,9 @@ extension MoviesPresenter {
 
     enum Alert {
         case sortingActionSheet
+    }
+
+    enum Route: Equatable {
+        case movieDetails(movieId: Int)
     }
 }

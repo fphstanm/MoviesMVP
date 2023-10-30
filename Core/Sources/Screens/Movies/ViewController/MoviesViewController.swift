@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 public protocol MoviesRouting {
-    func onTapDetails()
+    func onTapDetails(movieId: Int)
 }
 
 public class MoviesViewController: UIViewController {
@@ -83,12 +83,26 @@ public class MoviesViewController: UIViewController {
             }
             .store(in: &cancellables)
 
+        state
+            .compactMap(\.route)
+            .sink { [router] route in
+                switch route {
+                case .movieDetails(let movieId):
+                    router.onTapDetails(movieId: movieId)
+                }
+            }
+            .store(in: &cancellables)
+
         contentView.onChangeSearchText = { [presenter] text in
             Task { await presenter.didChangeSearchText(text) }
         }
 
         contentView.onPullRefreshControl = { [presenter] in
             Task { await presenter.didPullToRefresh() }
+        }
+
+        contentView.onTapMovie = { [presenter] index in
+            presenter.didTapMovie(withIndex: index)
         }
 
         contentView.onScrollToBottom = { [presenter] in

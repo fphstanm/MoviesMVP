@@ -40,6 +40,15 @@ final class MoviesPresenter {
         await loadNextPage()
     }
 
+    func didTapMovie(withIndex index: Int) {
+        guard state.movies.count > index else {
+            return
+        }
+
+        state.route = .movieDetails(movieId: state.movies[index].id)
+        state.route = nil
+    }
+
     func didTapSortButton() {
         state.alert = .sortingActionSheet
         state.alert = nil

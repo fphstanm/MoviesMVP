@@ -12,6 +12,7 @@ public protocol MovieClienting {
     func getMovies(page: Int, sortOrder: MoviesSortOrder) async throws -> MoviesPage
     func searchMovies(page: Int, query: String) async throws -> MoviesPage
     func getMovieGenres() async throws -> [Genre]
+    func getMovieDetails(id: Int) async throws -> MovieDetails
 }
 
 public final class MovieClient: MovieClienting {
@@ -44,6 +45,12 @@ public final class MovieClient: MovieClienting {
         return makeGenreList(response: response)
     }
 
+    public func getMovieDetails(id: Int) async throws -> MovieDetails {
+        let request = try api.makeMovieDetailsRequest(id: id).asUrlRequest()
+        let response: MovieDetailsResponse = try await networkClient.execute(request: request)
+        return makeMovieDetails(response: response)
+    }
+
     // MARK: - Private methods
 
     private func makeMoviesPage(response: PaginatedResponse<MovieResponse>) -> MoviesPage {
@@ -71,5 +78,21 @@ public final class MovieClient: MovieClienting {
 
     private func makeGenreList(response: GenreListResponse) -> [Genre] {
         response.genres.map { Genre(id: $0.id, name: $0.name) }
+    }
+
+    private func makeMovieDetails(response: MovieDetailsResponse) -> MovieDetails {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-mm-dd"
+
+        return MovieDetails(
+            genres: response.genres.map { Genre(id: $0.id, name: $0.name) },
+            id: response.id,
+            overview: response.overview,
+            posterImageUrl: response.posterPath.flatMap(AppConstants.imageBaseURL.appendingPathComponent),
+            productionCountries: response.productionCountries.map { MovieProductionCountry(code: $0.code, name: $0.name) },
+            releaseDate: dateFormatter.date(from: response.releaseDate) ?? Date(),
+            title: response.title,
+            voteAverage: response.voteAverage
+        )
     }
 }
