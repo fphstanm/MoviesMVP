@@ -13,14 +13,14 @@ public struct AppRequest {
         case post = "POST"
     }
 
-    let baseUrl: String
+    let baseUrl: URL
     private(set) var method: Method
     private(set) var headers: [String: String]?
     private(set) var path: String
     private(set) var query: [String: String]?
     private(set) var body: Encodable?
 
-    init(baseUrl: String) {
+    init(baseUrl: URL) {
         self.baseUrl = baseUrl
         self.method = .get
         self.headers = nil

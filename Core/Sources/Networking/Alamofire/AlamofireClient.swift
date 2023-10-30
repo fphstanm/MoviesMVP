@@ -13,6 +13,7 @@ final public class AlamofireClient: NetworkClienting {
     public init() {}
 
     public func execute<Response: Decodable>(request: URLRequest) async throws -> Response {
+        print(request.url!)
         let result = await AF
             .request(request, interceptor: BearerAuthenticationInterceptor())
             .serializingData()

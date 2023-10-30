@@ -12,9 +12,11 @@ import UIKit
 final class MoviesCell: UICollectionViewCell {
 
     struct Model: Equatable, Hashable {
-        let imageUrl: URL
+        let id: Int
+        let imageUrl: URL?
         let title: String
         let rating: String
+        let releaseDate: String
         let genres: String
     }
 
@@ -25,6 +27,7 @@ final class MoviesCell: UICollectionViewCell {
     private let titleRatingStackView = UIStackView()
     private let titleLabel = UILabel()
     private let ratingLabel = UILabel()
+    private let releaseDateLabel = UILabel()
     private let genresLabel = UILabel()
 
     // MARK: - Lifecycle
@@ -49,6 +52,7 @@ final class MoviesCell: UICollectionViewCell {
         imageView.setImage(url: model.imageUrl)
         titleLabel.text = model.title
         ratingLabel.text = model.rating
+        releaseDateLabel.text = model.releaseDate
         genresLabel.text = model.genres
     }
 
@@ -62,6 +66,7 @@ final class MoviesCell: UICollectionViewCell {
         setupTitleRatingStackView()
         setupTitleLabel()
         setupRatingLabel()
+        setupReleaseDateLabel()
         setupGenresLabel()
     }
 
@@ -112,7 +117,7 @@ final class MoviesCell: UICollectionViewCell {
     }
 
     private func setupInfoStackView() {
-        [titleRatingStackView, UIView(), genresLabel].forEach(infoStackView.addArrangedSubview)
+        [titleRatingStackView, releaseDateLabel, UIView(), genresLabel].forEach(infoStackView.addArrangedSubview)
         infoStackView.axis = .vertical
         infoStackView.spacing = 2
         addSubview(infoStackView, constraints: [
@@ -138,6 +143,11 @@ final class MoviesCell: UICollectionViewCell {
         ratingLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         ratingLabel.font = .systemFont(ofSize: 20, weight: .bold)
         ratingLabel.textColor = .orange
+    }
+
+    private func setupReleaseDateLabel() {
+        releaseDateLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        releaseDateLabel.textColor = .lightGray
     }
 
     private func setupGenresLabel() {

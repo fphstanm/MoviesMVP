@@ -9,16 +9,29 @@ import Foundation
 
 struct MovieAPI {
 
-    private let baseUrl: String
+    private let baseUrl: URL
 
-    init(baseUrl: String) {
+    init(baseUrl: URL) {
         self.baseUrl = baseUrl
     }
 
-    func makePopularRequest(page: Int) -> AppRequest {
+    func makeDiscoverMoviesRequest(page: Int, sortBy: String) -> AppRequest {
         AppRequest(baseUrl: baseUrl)
             .add(method: .get)
-            .add(path: "movie/popular")
-            .add(query: ["page": String(page)])
+            .add(path: "discover/movie")
+            .add(query: ["page": String(page), "sort_by": sortBy])
+    }
+
+    func makeSearchMoviesRequest(page: Int, query: String) -> AppRequest {
+        AppRequest(baseUrl: baseUrl)
+            .add(method: .get)
+            .add(path: "search/movie")
+            .add(query: ["page": String(page), "query": query])
+    }
+
+    func makeMovieGenresRequest() -> AppRequest {
+        AppRequest(baseUrl: baseUrl)
+            .add(method: .get)
+            .add(path: "genre/movie/list")
     }
 }
