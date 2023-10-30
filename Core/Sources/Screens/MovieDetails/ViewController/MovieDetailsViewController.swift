@@ -5,6 +5,7 @@
 //  Created by Philip on 30.10.2023.
 //
 
+import Combine
 import UIKit
 
 public protocol MovieDetailsRouting {
@@ -16,6 +17,7 @@ public final class MovieDetailsViewController: UIViewController {
     private let contentView = MovieDetailsView()
     private let presenter: MovieDetailsPresenter
     private let router: MovieDetailsRouting
+    private var cancellables = [AnyCancellable]()
 
     // MARK: - Lifecycle
 
@@ -35,6 +37,20 @@ public final class MovieDetailsViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setupBinding()
         Task { await presenter.viewDidLoad() }
+    }
+
+    // MARK: - Private methods
+
+    private func setupBinding() {
+        let state = presenter.$state.removeDuplicates()
+
+        state
+            .map { MovieDetailsPresenter.makeUIModel(from: $0) }
+            .sink { [contentView] in
+                contentView.render($0)
+            }
+            .store(in: &cancellables)
     }
 }

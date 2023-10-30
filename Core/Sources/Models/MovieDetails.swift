@@ -37,4 +37,15 @@ public struct MovieDetails: Equatable {
         self.title = title
         self.voteAverage = voteAverage
     }
+
+    public static let empty: MovieDetails = MovieDetails(
+        genres: [],
+        id: 0,
+        overview: "",
+        posterImageUrl: nil,
+        productionCountries: [],
+        releaseDate: Date(),
+        title: "",
+        voteAverage: 0
+    )
 }

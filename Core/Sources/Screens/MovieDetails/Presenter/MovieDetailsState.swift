@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import Models
 
 extension MovieDetailsPresenter {
 
     struct State: Equatable {
         let movieId: Int
+        var movieDetails: MovieDetails
     }
 }

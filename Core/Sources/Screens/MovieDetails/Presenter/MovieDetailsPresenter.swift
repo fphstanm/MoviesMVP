@@ -18,14 +18,14 @@ final class MovieDetailsPresenter {
 
     public init(movieFacade: MovieFacading, movieId: Int) {
         self.movieFacade = movieFacade
-        self.state = State(movieId: movieId)
+        self.state = State(movieId: movieId, movieDetails: .empty)
     }
 
     // MARK: - Public methods
 
     func viewDidLoad() async {
         do {
-            let movieDetails = try await movieFacade.getMovieDetails(id: state.movieId)
+            state.movieDetails = try await movieFacade.getMovieDetails(id: state.movieId)
         } catch {
 
         }
